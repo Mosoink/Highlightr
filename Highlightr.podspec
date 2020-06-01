@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "Highlightr"
-  s.version          = "2.1.100"
+  s.version          = "2.1.101"
   s.summary          = "iOS & macOS Syntax Highlighter."
 
   s.description      = <<-DESC
