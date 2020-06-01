@@ -27,22 +27,22 @@ private typealias RPThemeDict = [String: [AnyHashable: AnyObject]]
 private typealias RPThemeStringDict = [String:[String:String]]
 
 /// Theme parser, can be used to configure the theme parameters. 
-open class Theme {
+open class Theme: NSObject {
     internal let theme : String
     internal var lightTheme : String!
     
     /// Regular font to be used by this theme
-    open var codeFont : RPFont!
+    @objc open var codeFont : RPFont!
     /// Bold font to be used by this theme
-    open var boldCodeFont : RPFont!
+    @objc open var boldCodeFont : RPFont!
     /// Italic font to be used by this theme
-    open var italicCodeFont : RPFont!
+    @objc open var italicCodeFont : RPFont!
     
     private var themeDict : RPThemeDict!
     private var strippedTheme : RPThemeStringDict!
     
     /// Default background color for the current theme.
-    open var themeBackgroundColor : RPColor!
+    @objc open var themeBackgroundColor : RPColor!
     
     /**
      Initialize the theme with the given theme name.
@@ -52,7 +52,8 @@ open class Theme {
     init(themeString: String)
     {
         theme = themeString
-        setCodeFont(RPFont(name: "Courier", size: 14)!)
+        super.init()
+        setCodeFont(font: RPFont(name: "Courier", size: 14)!)
         strippedTheme = stripTheme(themeString)
         lightTheme = strippedThemeToString(strippedTheme)
         themeDict = strippedThemeToTheme(strippedTheme)
@@ -86,7 +87,7 @@ open class Theme {
      
      - parameter font: UIFont (iOS or tvOS) or NSFont (OSX)
      */
-    open func setCodeFont(_ font: RPFont)
+    @objc open func setCodeFont(font: RPFont)
     {
         codeFont = font
         

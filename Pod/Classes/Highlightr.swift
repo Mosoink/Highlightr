@@ -14,10 +14,10 @@ import JavaScriptCore
 #endif
 
 /// Utility class for generating a highlighted NSAttributedString from a String.
-open class Highlightr
+@objc open class Highlightr: NSObject
 {
     /// Returns the current Theme.
-    open var theme : Theme!
+    @objc open var theme : Theme!
     {
         didSet
         {
@@ -26,10 +26,10 @@ open class Highlightr
     }
     
     /// This block will be called every time the theme changes.
-    open var themeChanged : ((Theme) -> Void)?
+    @objc open var themeChanged : ((Theme) -> Void)?
 
     /// Defaults to `false` - when `true`, forces highlighting to finish even if illegal syntax is detected.
-    open var ignoreIllegals = false
+    @objc open var ignoreIllegals = false
 
     private let hljs: JSValue
 
@@ -39,6 +39,14 @@ open class Highlightr
     private let spanStartClose = "\">"
     private let spanEnd = "/span>"
     private let htmlEscape = try! NSRegularExpression(pattern: "&#?[a-zA-Z0-9]+?;", options: .caseInsensitive)
+    
+    @objc public static func highlightr() -> Highlightr? {
+        return Highlightr()
+    }
+    
+    @objc public static func highlightr(highlightPath: String) -> Highlightr? {
+        return Highlightr(highlightPath: highlightPath)
+    }
     
     /**
      Default init method.
@@ -59,18 +67,20 @@ open class Highlightr
         {
             return nil
         }
-        
-        let hgJs = try! String.init(contentsOfFile: hgPath)
-        let value = jsContext.evaluateScript(hgJs)
+
+        let hgJs         = try! String.init(contentsOfFile: hgPath)
+        let value        = jsContext.evaluateScript(hgJs)
         if value?.toBool() != true
         {
             return nil
         }
-        guard let hljs = window?.objectForKeyedSubscript("hljs") else
+        guard let hljs   = window?.objectForKeyedSubscript("hljs") else
         {
             return nil
         }
-        self.hljs = hljs
+        self.hljs        = hljs
+        
+        super.init()
         
         guard setTheme(to: "pojoaque") else
         {
@@ -87,7 +97,7 @@ open class Highlightr
      - returns: true if it was possible to set the given theme, false otherwise
      */
     @discardableResult
-    open func setTheme(to name: String) -> Bool
+    @objc open func setTheme(to name: String) -> Bool
     {
         guard let defTheme = bundle.path(forResource: name+".min", ofType: "css") else
         {
@@ -109,7 +119,7 @@ open class Highlightr
      
      - returns: NSAttributedString with the detected code highlighted.
      */
-    open func highlight(_ code: String, as languageName: String? = nil, fastRender: Bool = true) -> NSAttributedString?
+    @objc open func highlight(_ code: String, as languageName: String? = nil, fastRender: Bool = true) -> NSAttributedString?
     {
         let ret: JSValue
         if let languageName = languageName
@@ -154,7 +164,7 @@ open class Highlightr
      
      - returns: Array of Strings
      */
-    open func availableThemes() -> [String]
+    @objc open func availableThemes() -> [String]
     {
         let paths = bundle.paths(forResourcesOfType: "css", inDirectory: nil) as [NSString]
         var result = [String]()
@@ -170,7 +180,7 @@ open class Highlightr
      
      - returns: Array of Strings
      */
-    open func supportedLanguages() -> [String]
+    @objc open func supportedLanguages() -> [String]
     {
         let res = hljs.invokeMethod("listLanguages", withArguments: [])
         return res!.toArray() as! [String]
